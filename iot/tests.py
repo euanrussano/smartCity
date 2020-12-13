@@ -94,15 +94,68 @@ class SensorTestCase(TestCase):
         co2Meter = CO2Meter.objects.create(device = device_infoKiosk)
         co2Meter.save()
 
-    def test_streetSign(self):
+    def test_sensors(self):
         info_kiosk = InformationKiosk.objects.get(pk=1)
         print(info_kiosk)
         print('Info Kiosk sensors...')
         sensors = info_kiosk.inputsensor_set.all()
         print(sensors)
 
+    def test_microphone(self):
+        print("---- TEST MICROPHONE ------")
+        info_kiosk = InformationKiosk.objects.get(pk=1)
+
+        sensors = info_kiosk.inputsensor_set.all()
         print('Info Kiosk microfone...')
-        print(Microphone.objects.filter(device=info_kiosk)[0])
+        mic = Microphone.objects.filter(device=info_kiosk)[0]
+
+        print("dummy microphone event")
+        micEvent = MicrophoneEvent.objects.create(audioTranscript = " emergency ", inputSensor=mic)
+
+        print("events on microphone of kiosk")
+        print(mic.event_set.all())
+
+    def test_camera(self):
+        print("---- TEST CAMERA ------")
+        info_kiosk = InformationKiosk.objects.get(pk=1)
+
+        sensors = info_kiosk.inputsensor_set.all()
+        print('Info Kiosk camera...')
+        camera = Camera.objects.filter(device=info_kiosk)[0]
+    
+        print("dummy camera event")
+        cameraEvent = CameraEvent.objects.create(imageTranscript = " emergency ", inputSensor=camera)
+
+        print("events on camera of kiosk")
+        print(camera.event_set.all())
+
+    def test_thermometer(self):
+        print("---- TEST THERMOMETER ------")
+        info_kiosk = InformationKiosk.objects.get(pk=1)
+
+        sensors = info_kiosk.inputsensor_set.all()
+        print('Info Kiosk thermometer...')
+        thermometer = Thermometer.objects.filter(device=info_kiosk)[0]
+    
+        print("dummy thermometer event")
+        thermometerEvent = ThermometerEvent.objects.create(temperature = 20.0, inputSensor=thermometer)
+
+        print("events on thermometer of kiosk")
+        print(thermometer.event_set.all())
+
+    def test_co2meter(self):
+        print("---- TEST CO2METER ------")
+        info_kiosk = InformationKiosk.objects.get(pk=1)
+
+        sensors = info_kiosk.inputsensor_set.all()
+        print('Info Kiosk co2 meter...')
+        co2meter = Thermometer.objects.filter(device=info_kiosk)[0]
+    
+        print("dummy co2 meter event")
+        co2meterEvent = CO2Event.objects.create(co2Level = 100.0, inputSensor=co2meter)
+
+        print("events on co2 meter of kiosk")
+        print(co2meter.event_set.all())
         
         
 

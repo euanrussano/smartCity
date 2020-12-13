@@ -25,10 +25,29 @@ This project was developed using Python/Django and consists in a system to manag
 
 ## Setup
 <!--Describe how to install / setup your local environement / add link to demo version.-->
+This consists in a regulat Django project, so to run the server:
+```
+python manage.py runserver
+```
 
 ## Code Examples
 <!--Show examples of usage:
 `put-your-code-here`-->
+Up to now only the tests are fully functional. You can run them using
+
+```
+python manage.py test iot.tests
+```
+
+To keep the same database for every test:
+```
+python manage.py test iot.tests --keepdb
+```
+
+To run one specific test:
+```
+python manage.py test iot.tests.SensorTestCase
+```
 
 ## Features
 The system currently has the following working features
@@ -52,7 +71,6 @@ Where Machine Learning goes in?
 Project is: _in progress_,<!-- _finished_, _no longer continue_ and why?-->
 
 ## Inspiration
-Project inspired by Smart City Project from CSCI E-97
 
 ## Contact
 Created by [@euanrussano](https://e-sophia.netlify.app) - feel free to contact me!

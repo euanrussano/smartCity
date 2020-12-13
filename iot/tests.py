@@ -1,5 +1,8 @@
 from django.test import TestCase
-from .models import Account, City, Role, Resident, Visitor, StreetSign, Status
+from .models import Account, City, Role 
+from .models import Resident, Visitor
+from .models import StreetSign, Status, InformationKiosk
+from .models import Camera, CameraEvent, Microphone, MicrophoneEvent, Thermometer, ThermometerEvent, CO2Meter, CO2Event
 
 # Create your tests here.
 class CityTestCase(TestCase):
@@ -70,4 +73,36 @@ class DeviceTestCase(TestCase):
 
         print("See the location of the sign")
         print("Street Sign city ", street_sign_new.city)
+
+
+class SensorTestCase(TestCase):
+    def setUp(self):
+        city_dubai = City.objects.create(name="Dubai", account = Account.objects.create())
+        
+        
+
+        device_infoKiosk = InformationKiosk(account = Account.objects.create(), status=Status.WORKING, 
+        enabled = True, city=city_dubai)
+        device_infoKiosk.save()
+
+        mic = Microphone.objects.create(device = device_infoKiosk)
+        mic.save()
+        camera = Camera.objects.create(device = device_infoKiosk)
+        camera.save()
+        thermometer = Thermometer.objects.create(device = device_infoKiosk)
+        thermometer.save()
+        co2Meter = CO2Meter.objects.create(device = device_infoKiosk)
+        co2Meter.save()
+
+    def test_streetSign(self):
+        info_kiosk = InformationKiosk.objects.get(pk=1)
+        print(info_kiosk)
+        print('Info Kiosk sensors...')
+        sensors = info_kiosk.inputsensor_set.all()
+        print(sensors)
+
+        print('Info Kiosk microfone...')
+        print(Microphone.objects.filter(device=info_kiosk)[0])
+        
+        
 

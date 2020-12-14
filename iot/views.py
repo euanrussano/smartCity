@@ -1,7 +1,11 @@
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, render
 
-from .models import City
+from .models import Account, City
+from .models import Role, Resident, Visitor
+from .models import StreetSign, StreetLight, InformationKiosk
+from .models import Camera, CameraEvent, Microphone, MicrophoneEvent, Thermometer, ThermometerEvent, CO2Meter, CO2Event, InputSensor
+
 
 # Create your views here.
 #-------- IOT index - show city list----------------------------
@@ -20,7 +24,12 @@ def city_detail(request, city_id):
     return render(request, 'iot/city_detail.html', {'city': city})
 
 def city_devices(request, city_id):
-    return HttpResponse(f"You're looking at the devices of city {city_id}")
+    context = {
+        'streetSign_list': StreetSign.objects.filter(city=City.objects.get(pk=city_id)),
+        'streetLight_list': StreetLight.objects.filter(city=City.objects.get(pk=city_id)),
+        'inforKiosk_list': InformationKiosk.objects.filter(city=City.objects.get(pk=city_id))
+    }
+    return render(request, 'iot/city_devices.html', context)
 
 def city_events(request, city_id):
     return HttpResponse(f"You're looking at the events of city {city_id}")

@@ -1,0 +1,29 @@
+{% if streetSign_list %}
+    <ul>
+    {% for device in streetSign_list %}
+        <li><a href="/iot/{{ city.id }}/devices/{{ device.id }}">Street Sign {{ device.id }}</a></li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>No street sign.</p>
+{% endif %}
+
+{% if streetLight_list %}
+    <ul>
+    {% for device in streetLight_list %}
+        <li><a href="/iot/{{ city.id }}/devices/{{ device.id }}">Street Light {{ device.id }}</a></li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>No street light.</p>
+{% endif %}
+
+{% if infoKiosk_list %}
+    <ul>
+    {% for device in infoKiosk_list %}
+        <li><a href="/iot/{{ city.id }}/devices/{{ device.id }}">Information Kiosk {{ device.id }}</a></li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>No information kiosk.</p>
+{% endif %}

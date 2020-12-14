@@ -1,6 +1,6 @@
 <h1>{{ city.name }}</h1>
 <ul>
     {% for device in city.device_set.all %}
-        <li>{{ device.id }}</li>
+        <li><a href="/iot/{{ city.id }}/devices/{{device.id}}">{{ device }}</a></li>
     {% endfor %}
 </ul>

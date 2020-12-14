@@ -32,3 +32,9 @@ def device_detail(request, device_id):
 #-------- Event views----------------------------
 def event_detail(request, event_id):
     return HttpResponse(f"You're looking at event {event_id}")
+
+#-------- Person views----------------------------
+def person_detail(request, person_id):
+    return HttpResponse(f"You're looking at person {person_id}")
+
+

@@ -2,7 +2,7 @@ from django.test import TestCase
 from .models import Account, City, Role 
 from .models import Resident, Visitor
 from .models import StreetSign, Status, InformationKiosk
-from .models import Camera, CameraEvent, Microphone, MicrophoneEvent, Thermometer, ThermometerEvent, CO2Meter, CO2Event
+from .models import Camera, CameraEvent, Microphone, MicrophoneEvent, Thermometer, ThermometerEvent, CO2Meter, CO2Event, InputSensor
 
 # Create your tests here.
 class CityTestCase(TestCase):
@@ -84,22 +84,19 @@ class SensorTestCase(TestCase):
         device_infoKiosk = InformationKiosk(account = Account.objects.create(), status=Status.WORKING, 
         enabled = True, city=city_dubai)
         device_infoKiosk.save()
-
-        mic = Microphone.objects.create(device = device_infoKiosk)
-        mic.save()
-        camera = Camera.objects.create(device = device_infoKiosk)
-        camera.save()
-        thermometer = Thermometer.objects.create(device = device_infoKiosk)
-        thermometer.save()
-        co2Meter = CO2Meter.objects.create(device = device_infoKiosk)
-        co2Meter.save()
+        
+        Camera.objects.create(device = device_infoKiosk)
+        Microphone.objects.create(device = device_infoKiosk)
+        Thermometer.objects.create(device = device_infoKiosk)
+        CO2Meter.objects.create(device = device_infoKiosk)
 
     def test_sensors(self):
         info_kiosk = InformationKiosk.objects.get(pk=1)
         print(info_kiosk)
         print('Info Kiosk sensors...')
-        sensors = info_kiosk.inputsensor_set.all()
+        sensors = InputSensor.objects.filter(device = info_kiosk)
         print(sensors)
+
 
     def test_microphone(self):
         print("---- TEST MICROPHONE ------")
@@ -110,10 +107,10 @@ class SensorTestCase(TestCase):
         mic = Microphone.objects.filter(device=info_kiosk)[0]
 
         print("dummy microphone event")
-        micEvent = MicrophoneEvent.objects.create(audioTranscript = " emergency ", inputSensor=mic)
+        micEvent = MicrophoneEvent.objects.create(audioTranscript = " emergency ", microphone=mic)
 
         print("events on microphone of kiosk")
-        print(mic.event_set.all())
+        print(mic.microphoneevent_set.all())
 
     def test_camera(self):
         print("---- TEST CAMERA ------")
@@ -124,10 +121,10 @@ class SensorTestCase(TestCase):
         camera = Camera.objects.filter(device=info_kiosk)[0]
     
         print("dummy camera event")
-        cameraEvent = CameraEvent.objects.create(imageTranscript = " emergency ", inputSensor=camera)
+        cameraEvent = CameraEvent.objects.create(imageTranscript = " emergency ", camera=camera)
 
         print("events on camera of kiosk")
-        print(camera.event_set.all())
+        print(camera.cameraevent_set.all())
 
     def test_thermometer(self):
         print("---- TEST THERMOMETER ------")
@@ -138,10 +135,10 @@ class SensorTestCase(TestCase):
         thermometer = Thermometer.objects.filter(device=info_kiosk)[0]
     
         print("dummy thermometer event")
-        thermometerEvent = ThermometerEvent.objects.create(temperature = 20.0, inputSensor=thermometer)
+        thermometerEvent = ThermometerEvent.objects.create(temperature = 20.0, thermometer=thermometer)
 
         print("events on thermometer of kiosk")
-        print(thermometer.event_set.all())
+        print(thermometer.thermometerevent_set.all())
 
     def test_co2meter(self):
         print("---- TEST CO2METER ------")
@@ -149,13 +146,13 @@ class SensorTestCase(TestCase):
 
         sensors = info_kiosk.inputsensor_set.all()
         print('Info Kiosk co2 meter...')
-        co2meter = Thermometer.objects.filter(device=info_kiosk)[0]
+        co2meter = CO2Meter.objects.filter(device=info_kiosk)[0]
     
         print("dummy co2 meter event")
-        co2meterEvent = CO2Event.objects.create(co2Level = 100.0, inputSensor=co2meter)
+        co2meterEvent = CO2Event.objects.create(co2Level = 100.0, co2meter=co2meter)
 
         print("events on co2 meter of kiosk")
-        print(co2meter.event_set.all())
+        print(co2meter.co2event_set.all())
         
         
 

@@ -19,4 +19,5 @@ urlpatterns = [
 
     
     path('<int:city_id>/devices/<int:device_id>/update_streetsign', views.update_streetsign, name='update_streetsign'),
+    path('<int:city_id>/devices/<int:device_id>/update_device', views.update_device, name='update_device'),
 ]

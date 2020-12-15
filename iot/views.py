@@ -59,6 +59,31 @@ def device_detail(request, city_id, device_id):
 
     return render(request, 'iot/device_detail.html', context)
 
+def update_device(request, city_id, device_id):
+    device = get_object_or_404(Device, pk=device_id)
+    #print("-"*20)
+    #print("request.POST['enable_disable']", request.POST['enable_disable'])
+    
+    if 'enable_disable' in request.POST:
+        
+        if request.POST['enable_disable'] == 'enable':
+            device.enabled = True
+        elif request.POST['enable_disable'] == 'disable':
+            device.enabled = False
+
+    if request.POST['streetsign_text']:
+        streetsign = StreetSign(pk=device.pk) #this will empty the parent field
+        new_text = request.POST['streetsign_text']
+        streetsign.text = new_text
+        streetsign.__dict__.update(device.__dict__)
+        device = streetsign
+
+    device.save()
+
+    context = {'device_name':device.get_name(), 'device': device}
+
+    return HttpResponseRedirect(reverse('iot:device detail', args=(city_id, device_id)))
+
 def update_streetsign(request, city_id, device_id):
     device = get_object_or_404(StreetSign, pk=device_id)
     new_text = request.POST['streetsign_text']
@@ -68,6 +93,8 @@ def update_streetsign(request, city_id, device_id):
     context = {'device_name':device.get_name(), 'device': device}
 
     return HttpResponseRedirect(reverse('iot:device detail', args=(city_id, device_id)))
+
+
 
 #-------- Event views----------------------------
 def event_detail(request, event_id):

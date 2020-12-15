@@ -1,0 +1,147 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>iot.views &#8212; SmartCity 0.0.1 documentation</title>
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for iot.views</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">django.http</span> <span class="kn">import</span> <span class="n">HttpResponse</span>
+<span class="kn">from</span> <span class="nn">django.shortcuts</span> <span class="kn">import</span> <span class="n">get_object_or_404</span><span class="p">,</span> <span class="n">render</span>
+
+<span class="kn">from</span> <span class="nn">.models</span> <span class="kn">import</span> <span class="n">Account</span><span class="p">,</span> <span class="n">City</span>
+<span class="kn">from</span> <span class="nn">.models</span> <span class="kn">import</span> <span class="n">Role</span><span class="p">,</span> <span class="n">Resident</span><span class="p">,</span> <span class="n">Visitor</span>
+<span class="kn">from</span> <span class="nn">.models</span> <span class="kn">import</span> <span class="n">StreetSign</span><span class="p">,</span> <span class="n">StreetLight</span><span class="p">,</span> <span class="n">InformationKiosk</span>
+<span class="kn">from</span> <span class="nn">.models</span> <span class="kn">import</span> <span class="n">Camera</span><span class="p">,</span> <span class="n">CameraEvent</span><span class="p">,</span> <span class="n">Microphone</span><span class="p">,</span> <span class="n">MicrophoneEvent</span><span class="p">,</span> <span class="n">Thermometer</span><span class="p">,</span> <span class="n">ThermometerEvent</span><span class="p">,</span> <span class="n">CO2Meter</span><span class="p">,</span> <span class="n">CO2Event</span><span class="p">,</span> <span class="n">InputSensor</span>
+
+
+<span class="c1"># Create your views here.</span>
+<span class="c1">#-------- IOT index - show city list----------------------------</span>
+<div class="viewcode-block" id="index"><a class="viewcode-back" href="../../modules/views.html#iot.views.index">[docs]</a><span class="k">def</span> <span class="nf">index</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+    <span class="n">city_list</span> <span class="o">=</span> <span class="n">City</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">order_by</span><span class="p">(</span><span class="s1">&#39;-name&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">city_list</span><span class="p">)</span>
+    <span class="n">context</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;city_list&#39;</span><span class="p">:</span> <span class="n">city_list</span><span class="p">,</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="n">render</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="s1">&#39;iot/index.html&#39;</span><span class="p">,</span> <span class="n">context</span><span class="p">)</span></div>
+
+<span class="c1">#-------- City views----------------------------</span>
+
+<div class="viewcode-block" id="city_detail"><a class="viewcode-back" href="../../modules/views.html#iot.views.city_detail">[docs]</a><span class="k">def</span> <span class="nf">city_detail</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">city_id</span><span class="p">):</span>
+    <span class="n">city</span> <span class="o">=</span> <span class="n">get_object_or_404</span><span class="p">(</span><span class="n">City</span><span class="p">,</span> <span class="n">pk</span><span class="o">=</span><span class="n">city_id</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">render</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="s1">&#39;iot/city_detail.html&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;city&#39;</span><span class="p">:</span> <span class="n">city</span><span class="p">})</span></div>
+
+<div class="viewcode-block" id="city_devices"><a class="viewcode-back" href="../../modules/views.html#iot.views.city_devices">[docs]</a><span class="k">def</span> <span class="nf">city_devices</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">city_id</span><span class="p">):</span>
+    <span class="n">context</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;streetSign_list&#39;</span><span class="p">:</span> <span class="n">StreetSign</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">city</span><span class="o">=</span><span class="n">City</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">pk</span><span class="o">=</span><span class="n">city_id</span><span class="p">)),</span>
+        <span class="s1">&#39;streetLight_list&#39;</span><span class="p">:</span> <span class="n">StreetLight</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">city</span><span class="o">=</span><span class="n">City</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">pk</span><span class="o">=</span><span class="n">city_id</span><span class="p">)),</span>
+        <span class="s1">&#39;inforKiosk_list&#39;</span><span class="p">:</span> <span class="n">InformationKiosk</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">city</span><span class="o">=</span><span class="n">City</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">pk</span><span class="o">=</span><span class="n">city_id</span><span class="p">))</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="n">render</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="s1">&#39;iot/city_devices.html&#39;</span><span class="p">,</span> <span class="n">context</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="city_events"><a class="viewcode-back" href="../../modules/views.html#iot.views.city_events">[docs]</a><span class="k">def</span> <span class="nf">city_events</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">city_id</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">HttpResponse</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;You&#39;re looking at the events of city </span><span class="si">{</span><span class="n">city_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+<span class="c1">#-------- Device views----------------------------</span>
+<div class="viewcode-block" id="device_detail"><a class="viewcode-back" href="../../modules/views.html#iot.views.device_detail">[docs]</a><span class="k">def</span> <span class="nf">device_detail</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">device_id</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">HttpResponse</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;You&#39;re looking at device </span><span class="si">{</span><span class="n">device_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+<span class="c1">#-------- Event views----------------------------</span>
+<div class="viewcode-block" id="event_detail"><a class="viewcode-back" href="../../modules/views.html#iot.views.event_detail">[docs]</a><span class="k">def</span> <span class="nf">event_detail</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">event_id</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">HttpResponse</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;You&#39;re looking at event </span><span class="si">{</span><span class="n">event_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+<span class="c1">#-------- Person views----------------------------</span>
+<div class="viewcode-block" id="person_detail"><a class="viewcode-back" href="../../modules/views.html#iot.views.person_detail">[docs]</a><span class="k">def</span> <span class="nf">person_detail</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">person_id</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">HttpResponse</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;You&#39;re looking at person </span><span class="si">{</span><span class="n">person_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../index.html">SmartCity</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, Euan Russano.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.3.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

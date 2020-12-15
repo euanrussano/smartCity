@@ -1,9 +1,10 @@
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render
+from django.urls import reverse
 
 from .models import Account, City
 from .models import Role, Resident, Visitor
-from .models import StreetSign, StreetLight, InformationKiosk
+from .models import Device, StreetSign, StreetLight, InformationKiosk
 from .models import Camera, CameraEvent, Microphone, MicrophoneEvent, Thermometer, ThermometerEvent, CO2Meter, CO2Event, InputSensor
 
 
@@ -24,19 +25,49 @@ def city_detail(request, city_id):
     return render(request, 'iot/city_detail.html', {'city': city})
 
 def city_devices(request, city_id):
+    
     context = {
-        'streetSign_list': StreetSign.objects.filter(city=City.objects.get(pk=city_id)),
-        'streetLight_list': StreetLight.objects.filter(city=City.objects.get(pk=city_id)),
-        'inforKiosk_list': InformationKiosk.objects.filter(city=City.objects.get(pk=city_id))
-    }
+            'city_id':city_id,
+            'device_lists':{
+                'streetsign': StreetSign.objects.filter(city=City.objects.get(pk=city_id)),
+                'streetlight': StreetLight.objects.filter(city=City.objects.get(pk=city_id)),
+                'informationkiosk': InformationKiosk.objects.filter(city=City.objects.get(pk=city_id))
+                }
+            }
+
+    print(context)
     return render(request, 'iot/city_devices.html', context)
 
 def city_events(request, city_id):
     return HttpResponse(f"You're looking at the events of city {city_id}")
 
 #-------- Device views----------------------------
-def device_detail(request, device_id):
-    return HttpResponse(f"You're looking at device {device_id}")
+def device_detail(request, city_id, device_id):
+    
+    devices_list = [StreetSign, StreetLight, InformationKiosk]
+    device = get_object_or_404(Device, pk=device_id)
+    for device_type in devices_list:
+        try:
+            device = get_object_or_404(device_type, pk=device_id)
+            if device:
+                break
+        except:
+            pass
+    
+
+    context = {'device_name':device.get_name(), 'device': device}
+
+    return render(request, 'iot/device_detail.html', context)
+
+def update_streetsign(request, city_id, device_id):
+    device = get_object_or_404(StreetSign, pk=device_id)
+    new_text = request.POST['streetsign_text']
+    device.text = new_text
+    device.save()
+
+    context = {'device_name':device.get_name(), 'device': device}
+
+    return HttpResponseRedirect(reverse('iot:device detail', args=(city_id, device_id)))
 
 #-------- Event views----------------------------
 def event_detail(request, event_id):

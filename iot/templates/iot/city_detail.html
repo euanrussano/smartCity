@@ -1,6 +1,5 @@
 <h1>{{ city.name }}</h1>
-<ul>
-    {% for device in city.device_set.all %}
-        <li><a href="/iot/{{ city.id }}/devices/{{device.id}}">{{ device }}</a></li>
-    {% endfor %}
-</ul>
+
+<p><b>Latitude:</b> {{city.latitude}}</p>
+<p><b>Longitude:</b> {{city.longitude}}</p>
+<p><b>Radius:</b> {{city.radius}}</p>

@@ -57,17 +57,23 @@ class Device(models.Model):
     enabled = models.BooleanField(default=True)
     city = models.ForeignKey(City, on_delete=models.CASCADE,null=True)
     
+    def get_name(self):
+        return 'Device'
+
     def __str__(self):
-        return "Device id " + str(self.id) + " with account " + self.account.__str__() + " at lat " + str(self.latitude) + " and long " + str(self.longitude) + " with status "+ Status(self.status).label + " enabled " + str(self.enabled)
+        return self.get_name() + " id " + str(self.id) + " with account " + self.account.__str__() + " at lat " + str(self.latitude) + " and long " + str(self.longitude) + " with status "+ Status(self.status).label + " enabled " + str(self.enabled)
 
 class StreetSign(Device):
     text = models.CharField(max_length= 200)
 
+    def get_name(self):
+        return 'Street Sign'
+
     def __str__(self):
-        return "Street Sign " + super().__str__()
+        return super().__str__() + " with text " + self.text
 
 class InformationKiosk(Device):
-
+    
     def purchase_ticket(self, person, event):
         # The Kiosk can also support purchasing tickets for concerts and other events.
         # check the event price
@@ -76,16 +82,25 @@ class InformationKiosk(Device):
         # emit event ticket to person
         raise NotImplementedError
     
+    def get_name(self):
+        return 'Information Kiosk'
+
     def __str__(self):
         return "Information Kiosk " + super().__str__()
 
 class StreetLight(Device):
     brightness = models.FloatField(default=1.0)
 
+    def get_name(self):
+        return 'Street Light'
+
     def __str__(self):
         return "Street Light " + super().__str__()
 
 class Robot(Device):
+
+    def get_name(self):
+        return 'Robot'
 
     def __str__(self):
         return "Robot " + super().__str__()
@@ -94,6 +109,9 @@ class ParkingSpace(Device):
 
     fee = models.FloatField(default=0.0)
     
+    def get_name(self):
+        return 'Parking Space'
+
     def charge(self, vehicle, hours):
         # A parking space has an hourly rate which is charged
         # to the account associated with the vehicle.
@@ -111,6 +129,9 @@ class Vehicle(Device):
     vehicleType = models.CharField(max_length=1, choices=VehicleType.choices, default=VehicleType.CAR)
     maximumCapacity = models.IntegerField(default=1)
     fee = models.FloatField(default=0.0)
+
+    def get_name(self):
+        return 'Vehicle'
 
     def charge(self, person):
         # Riding in a Bus or Car is free for Visitors, 

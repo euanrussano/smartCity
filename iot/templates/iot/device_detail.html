@@ -1,0 +1,26 @@
+<h1>{{ device_name }}</h1>
+
+<p><b>Latitude:</b> {{device.latitude}}</p>
+<p><b>Longitude:</b> {{device.longitude}}</p>
+<p><b>Enabled:</b> {{device.enabled}}</p>
+<p><b>Status:</b> {{device.status}}</p>
+
+{% if device_name == "Street Sign" %}
+<p><b>Text:</b> {{device.text}}</p>
+
+{% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+
+<form action="{% url 'iot:update_streetsign' device.city.id device.id %}" method="post">
+{% csrf_token %}
+
+<input type="text" name="streetsign_text" id="streetsign_text">
+<label for="streetsign_text">Text</label><br>
+
+<input type="submit" value="Update">
+</form>
+
+{% endif %}
+
+{% if device_name == "Street Light" %}
+<p><b>Brightness:</b> {{device.brightness}}</p>
+{% endif %}

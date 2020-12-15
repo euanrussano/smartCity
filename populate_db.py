@@ -2,7 +2,7 @@
 
 from iot.models import Account, City 
 from iot.models import Role, Resident, Visitor
-from iot.models import StreetSign, Status, InformationKiosk
+from iot.models import StreetSign, Status, InformationKiosk, StreetLight
 from iot.models import Camera, CameraEvent, Microphone, MicrophoneEvent, Thermometer, ThermometerEvent, CO2Meter, CO2Event, InputSensor
 
 
@@ -16,9 +16,17 @@ Visitor.objects.create()
 
 city_dubai = City.objects.create(name="Dubai", account = Account.objects.create())
 
+device_streetSign = StreetSign(account = Account.objects.create(), status=Status.WORKING, 
+enabled = True, city=city_dubai, text = "Speed limit 80 km/h")
+device_streetSign.save()
+
 device_infoKiosk = InformationKiosk(account = Account.objects.create(), status=Status.WORKING, 
 enabled = True, city=city_dubai)
 device_infoKiosk.save()
+
+device_streetLight = StreetLight(account = Account.objects.create(), status=Status.WORKING, 
+enabled = True, city=city_dubai, brightness = 1.0)
+device_streetLight.save()
 
 Camera.objects.create(device = device_infoKiosk)
 Microphone.objects.create(device = device_infoKiosk)

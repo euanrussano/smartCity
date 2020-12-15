@@ -4,7 +4,7 @@ from django.urls import reverse
 
 from .models import Account, City
 from .models import Role, Resident, Visitor
-from .models import Device, StreetSign, StreetLight, InformationKiosk
+from .models import Device, StreetSign, StreetLight, InformationKiosk, Status
 from .models import Camera, CameraEvent, Microphone, MicrophoneEvent, Thermometer, ThermometerEvent, CO2Meter, CO2Event, InputSensor
 
 
@@ -55,7 +55,7 @@ def device_detail(request, city_id, device_id):
             pass
     
 
-    context = {'device_name':device.get_name(), 'device': device}
+    context = {'device_name':device.get_name(), 'device': device, 'status':Status}
 
     return render(request, 'iot/device_detail.html', context)
 
@@ -64,6 +64,15 @@ def update_device(request, city_id, device_id):
     #print("-"*20)
     #print("request.POST['enable_disable']", request.POST['enable_disable'])
     
+    if 'status' in request.POST:
+        
+        if request.POST['status'] == 'working':
+            device.status = Status.WORKING
+        elif request.POST['status'] == 'not working':
+            device.status = Status.NOT_WORKING
+        elif request.POST['status'] == 'maintenance':
+            device.status = Status.UNDER_MAINTENANCE
+
     if 'enable_disable' in request.POST:
         
         if request.POST['enable_disable'] == 'enable':

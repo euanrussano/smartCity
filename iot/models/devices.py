@@ -1,6 +1,6 @@
 from django.db import models
 from .city import  City
-from .ledger import Account
+from .ledger import Account, AccountHolder
 
 # ------ Input sensors --------
 
@@ -48,20 +48,19 @@ class Status(models.TextChoices):
     NOT_WORKING = 'NW', 'Not Working'
     UNDER_MAINTENANCE = 'UM', 'Under Maintenance'
 
-class Device(models.Model):
+class Device(AccountHolder):
     # ABSTRACT CLASS - SHOULDN'T BE INSTANTIATED
-    account = models.OneToOneField(Account, on_delete=models.CASCADE, editable = False)
     latitude = models.FloatField(default = 0.0)
     longitude = models.FloatField(default = 0.0)
     status = models.CharField(max_length=2, choices=Status.choices, default=Status.WORKING)
     enabled = models.BooleanField(default=True)
-    city = models.ForeignKey(City, on_delete=models.CASCADE,null=True)
+    city_holder = models.ForeignKey(City, on_delete=models.CASCADE,null=True)
     
     def get_name(self):
         return 'Device'
 
     def __str__(self):
-        return self.get_name() + " id " + str(self.id) + " with account " + self.account.__str__() + " at lat " + str(self.latitude) + " and long " + str(self.longitude) + " with status "+ Status(self.status).label + " enabled " + str(self.enabled)
+        return self.get_name() + " id " + str(self.accountHolder_id) + " with account " + self.account.__str__() + " at lat " + str(self.latitude) + " and long " + str(self.longitude) + " with status "+ Status(self.status).label + " enabled " + str(self.enabled)
 
 class StreetSign(Device):
     text = models.CharField(max_length= 200)

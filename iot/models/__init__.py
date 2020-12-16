@@ -8,4 +8,4 @@ from .events import CameraEvent, MicrophoneEvent, ThermometerEvent, CO2Event
 
 from .ledger import Account
 
-from .people import Role, Resident, Visitor
+from .people import Role, Person, Resident, Visitor

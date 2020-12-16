@@ -1,13 +1,12 @@
 from django.db import models
 
-from .ledger import Account
+from .ledger import Account, AccountHolder
 
-class City(models.Model):
+class City(AccountHolder):
     name = models.CharField(max_length=200)
-    account = models.OneToOneField(Account, on_delete=models.CASCADE, editable=False)
     latitude = models.FloatField(default = 0.0)
     longitude = models.FloatField(default = 0.0)
     radius = models.FloatField(default = 0.0)
 
     def __str__(self):
-        return self.name + " with account " + self.account.__str__() + " at lat " + str(self.latitude) + " and long " + str(self.longitude) + " with radius "+ str(self.radius)
+        return self.name + " with id " + str(self.accountHolder_id) + " with account " + self.account.__str__() + " at lat " + str(self.latitude) + " and long " + str(self.longitude) + " with radius "+ str(self.radius)

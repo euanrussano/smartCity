@@ -1,8 +1,12 @@
+{% extends "iot/base.html" %}
+
+{% block content %}
+
 <h1>{{ resident.name }}</h1>
 
 {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
 
-<form action="{% url 'iot:update_resident' resident.person_id %}" method="post">
+<form action="{% url 'iot:resident_detail' resident.person_id %}" method="post">
 {% csrf_token %}
 
 <p><b>Latitude:</b> {{resident.latitude}}</p>
@@ -17,3 +21,5 @@
 
 <input type="submit" value="Change">
 </form>
+
+{% endblock %}

@@ -105,6 +105,9 @@ class ResidentList(generic.ListView):
 class ResidentDetail(generic.DetailView):
     model = Resident
 
+    def post(self):
+        pass
+
 def update_resident(request, person_id):
     
     resident = Resident.objects.get(person_id=person_id)

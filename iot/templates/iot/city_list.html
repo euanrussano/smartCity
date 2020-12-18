@@ -1,3 +1,7 @@
+{% extends "iot/base.html" %}
+
+{% block content %}
+
 {% if city_list %}
     <ul>
     {% for city in city_list %}
@@ -7,3 +11,4 @@
 {% else %}
     <p>No city registered.</p>
 {% endif %}
+{% endblock %}

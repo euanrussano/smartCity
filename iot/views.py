@@ -1,6 +1,7 @@
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render
 from django.urls import reverse
+from django.views import generic
 
 from .models import Account, City
 from .models import Role, Person, Resident, Visitor
@@ -9,51 +10,53 @@ from .models import Camera, CameraEvent, Microphone, MicrophoneEvent, Thermomete
 
 
 # Create your views here.
-#-------- IOT index - show city list----------------------------
-def index(request):
-    city_list = City.objects.order_by('-name')
-    print(city_list)
-    context = {
-        'city_list': city_list,
-    }
-    return render(request, 'iot/index.html', context)
+#-------- City views ----------------------------
+class CityList(generic.ListView):
+    context_object_name = 'city_list'
 
-#-------- City views----------------------------
+    def get_queryset(self):
+        return City.objects.order_by('-name')
 
-def city_detail(request, city_id):
-    context = {
-            'city':get_object_or_404(City, accountHolder_id=city_id),
-            'device_lists':{
-                'Street Sign': StreetSign.objects.filter(city_holder=City.objects.get(pk=city_id)),
-                'Street Light': StreetLight.objects.filter(city_holder=City.objects.get(pk=city_id)),
-                'Information Kiosk': InformationKiosk.objects.filter(city_holder=City.objects.get(pk=city_id))
-                }
-            }
-
-    return render(request, 'iot/city_detail.html', context)
-
-def city_events(request, city_id):
-    return HttpResponse(f"You're looking at the events of city {city_id}")
+class CityDetail(generic.DetailView):
+    model = City
 
 #-------- Device views----------------------------
-def device_detail(request, city_id, device_id):
-    
-    devices_list = [StreetSign, StreetLight, InformationKiosk]
-    device = get_object_or_404(Device, pk=device_id)
-    for device_type in devices_list:
-        try:
-            device = get_object_or_404(device_type, pk=device_id)
-            if device:
-                break
-        except:
-            pass
-    
+class DeviceList(generic.ListView):
+    context_object_name = 'device_list'
 
-    context = {'device_name':device.get_name(), 'device': device, 'status':Status}
+    def get_queryset(self):
+        return Device.objects.order_by('-latitude')
 
-    return render(request, 'iot/device_detail.html', context)
+class CityDeviceList(generic.ListView):
+    '''
+    Shows the devices inside the city radius. Obs: As cities may overlap, devices will
+    appear on different cities at the same time.
+    '''
+    context_object_name = 'device_list'
 
-def update_device(request, city_id, device_id):
+    def get_queryset(self):
+        '''
+        Filter the devices according their location and city radius.
+        Args:
+        Returns:
+            devices: a filtered list of devices according the city location and radius.
+        '''
+
+        city = City.objects.get(pk=self.kwargs['pk'])
+        devices_all = Device.objects.all()
+        device_ids = []
+        for device in devices_all:
+            if ( (device.latitude-city.latitude)**2 + (device.longitude-city.longitude)**2 )**0.5 <= city.radius:
+                device_ids.append(device.pk)
+
+        devices = Device.objects.filter(pk__in=device_ids)
+        return devices
+
+class DeviceDetail(generic.DetailView):
+    model = Device
+
+
+def update_device(request, device_id):
     device = get_object_or_404(Device, pk=device_id)
     #print("-"*20)
     #print("request.POST['enable_disable']", request.POST['enable_disable'])
@@ -86,32 +89,21 @@ def update_device(request, city_id, device_id):
 
     return HttpResponseRedirect(reverse('iot:device_detail', args=(city_id, device_id)))
 
-
+'''
 #-------- Event views----------------------------
 def event_detail(request, event_id):
     return HttpResponse(f"You're looking at event {event_id}")
+'''
 
-#-------- Person views----------------------------
-def resident_list(request):
-    
-    resident_list = Resident.objects.order_by('-name')
-    
-    context = {
-        'resident_list': resident_list,
-    }
-    return render(request, 'iot/resident_list.html', context)
+#-------- Resident Views ----------------------------
+class ResidentList(generic.ListView):
+    context_object_name = 'resident_list'
 
+    def get_queryset(self):
+        return Resident.objects.order_by('-name')
 
-def resident_detail(request, person_id):
-    
-    
-    resident = Resident.objects.get(person_id=person_id)
-    
-    context = {
-            'resident': resident,
-            }
-
-    return render(request, 'iot/resident_detail.html', context)
+class ResidentDetail(generic.DetailView):
+    model = Resident
 
 def update_resident(request, person_id):
     
@@ -125,3 +117,15 @@ def update_resident(request, person_id):
     resident.save()
 
     return HttpResponseRedirect(reverse("iot:resident_detail", args=(person_id,)))
+
+
+#-------- Visitor Views ----------------------------
+class VisitorList(generic.ListView):
+    context_object_name = 'visitor_list'
+
+    def get_queryset(self):
+        return Visitor.objects.order_by('-latitude')
+
+class VisitorDetail(generic.DetailView):
+    model = Visitor
+

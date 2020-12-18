@@ -8,9 +8,10 @@ verify_ssl = true
 [packages]
 django = "*"
 python-dotenv = "*"
-sphinx = "*"
-rinohtype = "*"
 pycco = "*"
+rst2pdf = "*"
+pdoc3 = "*"
+djangorestframework = "*"
 
 [requires]
 python_version = "3.8"

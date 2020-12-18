@@ -1,6 +1,3 @@
-{% extends "iot/base.html" %}
-
-{% block content %}
 {% if resident_list %}
     <ul>
     {% for resident in resident_list %}
@@ -10,4 +7,3 @@
 {% else %}
     <p>No resident registered.</p>
 {% endif %}
-{% endblock %}

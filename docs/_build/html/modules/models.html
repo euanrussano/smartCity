@@ -31,11 +31,12 @@
 
           <div class="body" role="main">
             
-  <div class="section" id="module-iot.models.city">
-<span id="city"></span><h1>City<a class="headerlink" href="#module-iot.models.city" title="Permalink to this headline">¶</a></h1>
-<dl class="py class">
+  <div class="section" id="city">
+<h1>City<a class="headerlink" href="#city" title="Permalink to this headline">¶</a></h1>
+<p>This model is used to generate/ manage a city inside the system.</p>
+<span class="target" id="module-iot.models.city"></span><dl class="py class">
 <dt id="iot.models.city.City">
-<em class="property">class </em><code class="sig-prename descclassname">iot.models.city.</code><code class="sig-name descname">City</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">id</span></em>, <em class="sig-param"><span class="n">name</span></em>, <em class="sig-param"><span class="n">account</span></em>, <em class="sig-param"><span class="n">latitude</span></em>, <em class="sig-param"><span class="n">longitude</span></em>, <em class="sig-param"><span class="n">radius</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/iot/models/city.html#City"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#iot.models.city.City" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">iot.models.city.</code><code class="sig-name descname">City</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">accountHolder_id</span></em>, <em class="sig-param"><span class="n">accountholder_ptr</span></em>, <em class="sig-param"><span class="n">name</span></em>, <em class="sig-param"><span class="n">latitude</span></em>, <em class="sig-param"><span class="n">longitude</span></em>, <em class="sig-param"><span class="n">radius</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/iot/models/city.html#City"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#iot.models.city.City" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="py exception">
 <dt id="iot.models.city.City.DoesNotExist">
 <em class="property">exception </em><code class="sig-name descname">DoesNotExist</code><a class="headerlink" href="#iot.models.city.City.DoesNotExist" title="Permalink to this definition">¶</a></dt>
@@ -47,8 +48,8 @@
 <dd></dd></dl>
 
 <dl class="py attribute">
-<dt id="iot.models.city.City.account">
-<code class="sig-name descname">account</code><a class="headerlink" href="#iot.models.city.City.account" title="Permalink to this definition">¶</a></dt>
+<dt id="iot.models.city.City.accountholder_ptr">
+<code class="sig-name descname">accountholder_ptr</code><a class="headerlink" href="#iot.models.city.City.accountholder_ptr" title="Permalink to this definition">¶</a></dt>
 <dd><p>Accessor to the related object on the forward side of a one-to-one relation.</p>
 <p>In the example:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Restaurant</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
@@ -59,8 +60,8 @@
 </dd></dl>
 
 <dl class="py attribute">
-<dt id="iot.models.city.City.account_id">
-<code class="sig-name descname">account_id</code><a class="headerlink" href="#iot.models.city.City.account_id" title="Permalink to this definition">¶</a></dt>
+<dt id="iot.models.city.City.accountholder_ptr_id">
+<code class="sig-name descname">accountholder_ptr_id</code><a class="headerlink" href="#iot.models.city.City.accountholder_ptr_id" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
@@ -76,13 +77,6 @@ many-to-one relation.</p>
 <p><code class="docutils literal notranslate"><span class="pre">Parent.children</span></code> is a <code class="docutils literal notranslate"><span class="pre">ReverseManyToOneDescriptor</span></code> instance.</p>
 <p>Most of the implementation is delegated to a dynamically defined manager
 class built by <code class="docutils literal notranslate"><span class="pre">create_forward_many_to_many_manager()</span></code> defined below.</p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt id="iot.models.city.City.id">
-<code class="sig-name descname">id</code><a class="headerlink" href="#iot.models.city.City.id" title="Permalink to this definition">¶</a></dt>
-<dd><p>A wrapper for a deferred-loading field. When the value is read from this
-object the first time, the query is executed.</p>
 </dd></dl>
 
 <dl class="py attribute">
@@ -105,11 +99,6 @@ object the first time, the query is executed.</p>
 <dd><p>A wrapper for a deferred-loading field. When the value is read from this
 object the first time, the query is executed.</p>
 </dd></dl>
-
-<dl class="py attribute">
-<dt id="iot.models.city.City.objects">
-<code class="sig-name descname">objects</code><em class="property"> = &lt;django.db.models.manager.Manager object&gt;</em><a class="headerlink" href="#iot.models.city.City.objects" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
 
 <dl class="py attribute">
 <dt id="iot.models.city.City.radius">

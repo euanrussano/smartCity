@@ -1,18 +1,10 @@
 from django.urls import path, include
 
-from rest_framework.routers import DefaultRouter  # add this
-from . import api # add this
+#from rest_framework.routers import DefaultRouter  # add this
 
 from . import views
 
-router = DefaultRouter()  # add this
-router.register(r'cities', api.CityViewSet)  # add this
-router.register(r'devices', api.DeviceViewSet)  # add this
-router.register(r'residents', api.ResidentViewSet)  # add this
-
-
-
-app_name = 'iot'
+'''
 urlpatterns = [
     path("api/", include(router.urls)),
 
@@ -43,3 +35,4 @@ urlpatterns = [
     # ex: /iot/person/1/
     path('residents/<int:pk>/update/', views.update_resident, name='update_resident'),
 ]
+'''

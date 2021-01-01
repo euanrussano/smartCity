@@ -12,6 +12,7 @@ class Transaction(models.Model):
     payer = models.ForeignKey(Account, on_delete = models.CASCADE, related_name='transaction_payer')
     receiver = models.ForeignKey(Account, on_delete= models.CASCADE, related_name='transaction_receiver')
     note = models.CharField(max_length=200)
+    created_at = models.DateTimeField(auto_now_add=True)
 
     def validate(self):
         if self.payer.balance < self.amount:
@@ -29,7 +30,7 @@ class Transaction(models.Model):
             super(Transaction, self).save(*args, **kwargs)
 
     def __str__(self):
-        return 'transaction amount ' + str(self.amount) + ' from ' + str(self.payer.id) + ' to ' + str(self.receiver.id) + ' note ' + self.note
+        return 'transaction at ' + str(self.created_at) + ' amount ' + str(self.amount) + ' from ' + str(self.payer.id) + ' to ' + str(self.receiver.id) + ' note ' + self.note
 
 '''
 from django.db.models.signals import post_save

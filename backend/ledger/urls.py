@@ -1,10 +1,12 @@
 from django.urls import path
+from rest_framework.routers import SimpleRouter
 
-from .views import AccountAPIListView, AccountAPIDetailView, TransactionAPIListView, TransactionAPIDetailView
+from .views import AccountAPIViewset, TransactionAPIViewset, UserAPIViewset
 
-urlpatterns = [
-    path('accounts/',AccountAPIListView.as_view()),
-    path('accounts/<int:pk>/',AccountAPIDetailView.as_view()),
-    path('transactions/',TransactionAPIListView.as_view()),
-    path('transactions/<int:pk>/',TransactionAPIDetailView.as_view()),
-]
+router = SimpleRouter()
+router.register('users', UserAPIViewset)
+router.register('accounts', AccountAPIViewset)
+router.register('transactions', TransactionAPIViewset)
+
+
+urlpatterns = router.urls

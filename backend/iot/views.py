@@ -10,6 +10,7 @@ from .models import Device, StreetSign, Status
 
 
 # Create your views here.
+
 #-------- City views ----------------------------
 class CityList(generic.ListView):
     context_object_name = 'city_list'

@@ -4,14 +4,17 @@ from django.urls import path, include
 
 from . import views
 
-'''
-urlpatterns = [
-    path("api/", include(router.urls)),
+app_name = 'iot'
 
+urlpatterns = [
+    #path("api/", include(router.urls)),
+    
     # ex: /iot/cities
-    path('cities/', views.CityList.as_view(), name='city_list'),
+    path('city/', views.CityList.as_view(), name='city_list'),
     # ex: /iot/cities/1/
-    path('cities/<int:pk>/', views.CityDetail.as_view(), name='city_detail'),
+    path('city/<int:pk>/', views.CityDetail.as_view(), name='city_detail'),
+]
+'''
     # ex: /iot/cities/1/devices  ----> Devices in city
     path('cities/<int:pk>/devices/', views.CityDeviceList.as_view(), name='city_device_list'),
     

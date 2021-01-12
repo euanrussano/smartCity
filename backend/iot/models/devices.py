@@ -59,7 +59,7 @@ class Device(models.Model):
         return 'Device'
 
     def __str__(self):
-        return self.get_name() + " id " + str(self.accountHolder_id) + " with account " + self.account.__str__() + " at lat " + str(self.latitude) + " and long " + str(self.longitude) + " with status "+ Status(self.status).label + " enabled " + str(self.enabled)
+        return self.get_name() + " at lat " + str(self.latitude) + " and long " + str(self.longitude) + " with status "+ Status(self.status).label + " enabled " + str(self.enabled)
 
 class StreetSign(Device):
     text = models.CharField(max_length= 200)

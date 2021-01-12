@@ -1,6 +1,27 @@
 # python manage.py shell < generate_data.py
 
-from iot.models import Account, City 
+# ledger app
+from ledger.models import Account, Transaction, TransactionStatus
+
+# Create 2 accounts
+payer = Account.objects.create(balance = 1000.0)
+receiver = Account.objects.create(balance = 0.0)
+
+# Create 2 transaction
+t1 = Transaction.objects.create(amount = 100,
+                            payer = payer,
+                            receiver = receiver,
+                            note = "A test transaction")
+t2 = Transaction.objects.create(amount = 300,
+                            payer = payer,
+                            receiver = receiver,
+                            note = "A second test transaction")
+
+# Process the first transaction
+t1.process()
+
+'''
+from iot.models import City
 from iot.models import Role, Resident, Visitor
 from iot.models import StreetSign, Status, InformationKiosk, StreetLight
 from iot.models import Camera, CameraEvent, Microphone, MicrophoneEvent, Thermometer, ThermometerEvent, CO2Meter, CO2Event, InputSensor
@@ -31,3 +52,4 @@ Camera.objects.create(device = device_infoKiosk)
 Microphone.objects.create(device = device_infoKiosk)
 Thermometer.objects.create(device = device_infoKiosk)
 CO2Meter.objects.create(device = device_infoKiosk)
+'''

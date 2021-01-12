@@ -6,7 +6,7 @@ from .devices import Microphone, Camera, Thermometer, CO2Meter
 
 class Event(models.Model):
     # ABSTRACT CLASS - SHOULDN'T BE INSTANTIATED
-    created = models.DateTimeField(default=timezone.now())
+    created = models.DateTimeField(auto_now_add=timezone.now())
     
     class Meta:
         ordering = ['created']

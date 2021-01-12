@@ -1,5 +1,12 @@
 from rest_framework import permissions
 
+class IsSuperUser(permissions.BasePermission):
+
+    def has_permission(self, request, view):
+
+        # Any permissions only allowed to superUser
+        return request.user.is_superuser
+
 class IsSuperUserOrReadOnly(permissions.BasePermission):
 
     def has_permission(self, request, view):

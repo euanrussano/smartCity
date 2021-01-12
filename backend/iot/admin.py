@@ -2,7 +2,7 @@ from django.contrib import admin
 
 from .models import City
 from .models import Role, Resident, Visitor
-from .models import StreetSign, Status, InformationKiosk
+from .models import StreetSign, InformationKiosk
 from .models import Camera, CameraEvent, Microphone, MicrophoneEvent, Thermometer, ThermometerEvent, CO2Meter, CO2Event, InputSensor
 
 # Register your models here.

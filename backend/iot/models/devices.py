@@ -1,5 +1,9 @@
 from django.db import models
+from django.contrib.auth import get_user_model
+
 from .city import  City
+
+from ledger.models import Transaction
 
 # ------ Input sensors --------
 
@@ -42,7 +46,7 @@ class Speaker(OutputSensor):
 
 # ------ Devices --------
 
-class Status(models.TextChoices):
+class DeviceStatus(models.TextChoices):
     WORKING = 'W', 'Working'
     NOT_WORKING = 'NW', 'Not Working'
     UNDER_MAINTENANCE = 'UM', 'Under Maintenance'
@@ -51,15 +55,32 @@ class Device(models.Model):
     # ABSTRACT CLASS - SHOULDN'T BE INSTANTIATED
     latitude = models.FloatField(default = 0.0)
     longitude = models.FloatField(default = 0.0)
-    status = models.CharField(max_length=2, choices=Status.choices, default=Status.WORKING)
+    status = models.CharField(max_length=2, choices=DeviceStatus.choices, default=DeviceStatus.WORKING)
     enabled = models.BooleanField(default=True)
-    city_holder = models.ForeignKey(City, on_delete=models.CASCADE,null=True)
     
+    @property
+    def city(self):
+        cities = City.objects.all()
+        city = 0
+        smallest_distance = 1e15
+        for city in cities:
+            distance = ((city.latitude - self.latitude)**2 + (city.longitude - self.longitude)**2)**0.5
+            if distance < city.radius:
+                return city
+        
+        # if the device is not in the radius of any city, return the first city in the db
+        # CORRECT THIS!
+        return cities[0]
+
+    @property
+    def account(self):
+        return self.city.account
+
     def get_name(self):
         return 'Device'
 
     def __str__(self):
-        return self.get_name() + " at lat " + str(self.latitude) + " and long " + str(self.longitude) + " with status "+ Status(self.status).label + " enabled " + str(self.enabled)
+        return self.get_name() + " at lat " + str(self.latitude) + " and long " + str(self.longitude) + " with status "+ DeviceStatus(self.status).label + " enabled " + str(self.enabled)
 
 class StreetSign(Device):
     text = models.CharField(max_length= 200)
@@ -74,11 +95,16 @@ class InformationKiosk(Device):
     
     def purchase_ticket(self, person, event):
         # The Kiosk can also support purchasing tickets for concerts and other events.
-        # check the event price
-        # check if person has balance
-        # charge person
-        # emit event ticket to person
-        raise NotImplementedError
+        
+        # create a transaction - payer is person and receiver is city
+        amount = event.price
+        payer = person.account
+        receiver = self.city.account
+        note = " Ticket to event " + event.__str__()
+        ticket_transaction = Transaction.objects.create(amount=amount, payer=payer, receiver=receiver, note=note)
+        
+        # try to process the transaction and return (True if was processed or False if created but still in draft mode)
+        return ticket_transaction.process()
     
     def get_name(self):
         return 'Information Kiosk'
@@ -113,7 +139,16 @@ class ParkingSpace(Device):
     def charge(self, vehicle, hours):
         # A parking space has an hourly rate which is charged
         # to the account associated with the vehicle.
-        raise NotImplementedError
+        
+        # create a transaction - payer is person and receiver is city
+        amount = hours * self.price
+        payer = vehicle.owner.account
+        receiver = self.city.account
+        note = " Parking fee relative to " + hours + " hours."
+        parking_transaction = Transaction.objects.create(amount=amount, payer=payer, receiver=receiver, note=note)
+        
+        # try to process the transaction and return (True if was processed or False if created but still in draft mode)
+        return parking_transaction.process()
 
     def __str__(self):
         return "Parking Space " + super().__str__()
@@ -127,6 +162,7 @@ class Vehicle(Device):
     vehicleType = models.CharField(max_length=1, choices=VehicleType.choices, default=VehicleType.CAR)
     maximumCapacity = models.IntegerField(default=1)
     fee = models.FloatField(default=0.0)
+    owner = models.OneToOneField(get_user_model(), on_delete=models.CASCADE)
 
     def get_name(self):
         return 'Vehicle'
@@ -134,7 +170,15 @@ class Vehicle(Device):
     def charge(self, person):
         # Riding in a Bus or Car is free for Visitors, 
         # but requires a fee for Residents.
-        raise NotImplementedError
+        # create a transaction - payer is person and receiver is city
+        amount = self.fee
+        payer = person.account
+        receiver = self.city.account
+        note = " Transport fee"
+        boarding_transaction = Transaction.objects.create(amount=amount, payer=payer, receiver=receiver, note=note)
+        
+        # try to process the transaction and return (True if was processed or False if created but still in draft mode)
+        return boarding_transaction.process()
 
     def __str__(self):
         return "Parking Space " + super().__str__()

@@ -1,135 +1,78 @@
-from django.http import HttpResponse, HttpResponseRedirect
-from django.shortcuts import get_object_or_404, render
-from django.urls import reverse
-from django.views import generic
+from django.contrib.auth import get_user_model
+
+from rest_framework import status, viewsets
+from rest_framework.decorators import action
+from rest_framework.response import Response
 
 from .models import City
-from .models import Resident, Visitor
-from .models import Device, StreetSign, Status
-#from .models import Camera, CameraEvent, Microphone, MicrophoneEvent, Thermometer, ThermometerEvent, CO2Meter, CO2Event, InputSensor
+from .models import InformationKiosk, ParkingSpace, Robot, StreetSign, StreetLight, Vehicle
 
+from .serializers import StreetLightSerializer, StreetSignSerializer, CitySerializer, InformationKioskSerializer, ParkingSpaceSerializer, VehicleSerializer, RobotSerializer
+from .permissions import IsSuperUserOrReadOnly, IsSuperUser
+
+from django_filters.rest_framework import DjangoFilterBackend
 
 # Create your views here.
+class CityAPIViewset(viewsets.ModelViewSet):
+    permission_classes = (IsSuperUserOrReadOnly,) # new
+    queryset = City.objects.all()
+    serializer_class = CitySerializer
 
-#-------- City views ----------------------------
-class CityList(generic.ListView):
-    context_object_name = 'city_list'
+class InformationKioskAPIViewset(viewsets.ModelViewSet):
+    permission_classes = (IsSuperUserOrReadOnly,) # new
+    queryset = InformationKiosk.objects.all()
+    serializer_class = InformationKioskSerializer
 
-    def get_queryset(self):
-        return City.objects.order_by('-name')
+    @action(detail=True)
+    def purchase_ticket(self, request, pk=None):
+        print(request)
+        print('pk = ', pk)
+        information_kiosk = self.get_object()
+        if information_kiosk.purchase_ticket(request['person'], ['event']):
+            return Response({'status': 'transaction processed'})
+        else:
+            return Response({'status': 'transaction NOT processed'})
 
-class CityDetail(generic.DetailView):
-    model = City
+class ParkingSpaceAPIViewset(viewsets.ModelViewSet):
+    permission_classes = (IsSuperUserOrReadOnly,) # new
+    queryset = ParkingSpace.objects.all()
+    serializer_class = ParkingSpaceSerializer
 
-#-------- Device views----------------------------
-class DeviceList(generic.ListView):
-    context_object_name = 'device_list'
+    @action(detail=True)
+    def charge(self, request, pk=None):
+        parking_space = self.get_object()
+        if parking_space.charge(self, request['vehicle'], request['hours']):
+            return Response({'status': 'transaction processed'})
+        else:
+            return Response({'status': 'transaction NOT processed'})
 
-    def get_queryset(self):
-        return Device.objects.order_by('-latitude')
+class RobotAPIViewset(viewsets.ModelViewSet):
+    permission_classes = (IsSuperUserOrReadOnly,) # new
+    queryset = Robot.objects.all()
+    serializer_class = RobotSerializer
 
-class CityDeviceList(generic.ListView):
-    '''
-    Shows the devices inside the city radius. Obs: As cities may overlap, devices will
-    appear on different cities at the same time.
-    '''
-    context_object_name = 'device_list'
+class StreetSignAPIViewset(viewsets.ModelViewSet):
+    permission_classes = (IsSuperUserOrReadOnly,) # new
+    queryset = StreetSign.objects.all()
+    serializer_class = StreetSignSerializer
 
-    def get_queryset(self):
-        '''
-        Filter the devices according their location and city radius.
-        Args:
-        Returns:
-            devices: a filtered list of devices according the city location and radius.
-        '''
+class StreetLightAPIViewset(viewsets.ModelViewSet):
+    permission_classes = (IsSuperUserOrReadOnly,) # new
+    queryset = StreetLight.objects.all()
+    serializer_class = StreetLightSerializer
 
-        city = City.objects.get(pk=self.kwargs['pk'])
-        devices_all = Device.objects.all()
-        device_ids = []
-        for device in devices_all:
-            if ( (device.latitude-city.latitude)**2 + (device.longitude-city.longitude)**2 )**0.5 <= city.radius:
-                device_ids.append(device.pk)
+class VehicleAPIViewset(viewsets.ModelViewSet):
+    permission_classes = (IsSuperUserOrReadOnly,) # new
+    queryset = Vehicle.objects.all()
+    serializer_class = VehicleSerializer
 
-        devices = Device.objects.filter(pk__in=device_ids)
-        return devices
-
-class DeviceDetail(generic.DetailView):
-    model = Device
-
-
-def update_device(request, device_id):
-    device = get_object_or_404(Device, pk=device_id)
-    #print("-"*20)
-    #print("request.POST['enable_disable']", request.POST['enable_disable'])
-    
-    if 'status' in request.POST:
-        
-        if request.POST['status'] == 'working':
-            device.status = Status.WORKING
-        elif request.POST['status'] == 'not working':
-            device.status = Status.NOT_WORKING
-        elif request.POST['status'] == 'maintenance':
-            device.status = Status.UNDER_MAINTENANCE
-
-    if 'enable_disable' in request.POST:
-        
-        if request.POST['enable_disable'] == 'enable':
-            device.enabled = True
-        elif request.POST['enable_disable'] == 'disable':
-            device.enabled = False
-
-    if 'streetsign_text' in request.POST:
-        if request.POST['streetsign_text'] != "":
-            streetsign = StreetSign.objects.get(pk=device.pk) #this will empty the parent field
-            new_text = request.POST['streetsign_text']
-            streetsign.text = new_text
-            streetsign.__dict__.update(device.__dict__)
-            device = streetsign
-
-    device.save()
-
-    return HttpResponseRedirect(reverse('iot:device_detail', args=(city_id, device_id)))
-
-'''
-#-------- Event views----------------------------
-def event_detail(request, event_id):
-    return HttpResponse(f"You're looking at event {event_id}")
-'''
-
-#-------- Resident Views ----------------------------
-class ResidentList(generic.ListView):
-    context_object_name = 'resident_list'
-
-    def get_queryset(self):
-        return Resident.objects.order_by('-name')
-
-class ResidentDetail(generic.DetailView):
-    model = Resident
-
-    def post(self):
-        pass
-
-def update_resident(request, person_id):
-    
-    resident = Resident.objects.get(person_id=person_id)
-    
-    if request.POST['phone_text'] != "" :
-        new_phone = request.POST['phone_text']
-        resident.phone = new_phone
-        
-
-    resident.save()
-
-    return HttpResponseRedirect(reverse("iot:resident_detail", args=(person_id,)))
+    @action(detail=True)
+    def charge(self, request, pk=None):
+        vehicle = self.get_object()
+        if vehicle.charge(self, request['person']):
+            return Response({'status': 'transaction processed'})
+        else:
+            return Response({'status': 'transaction NOT processed'})
 
 
-#-------- Visitor Views ----------------------------
-class VisitorList(generic.ListView):
-    context_object_name = 'visitor_list'
-
-    def get_queryset(self):
-        return Visitor.objects.order_by('-latitude')
-
-class VisitorDetail(generic.DetailView):
-    model = Visitor
 

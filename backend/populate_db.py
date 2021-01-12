@@ -20,14 +20,34 @@ t2 = Transaction.objects.create(amount = 300,
 # Process the first transaction
 t1.process()
 
-'''
 from iot.models import City
+from iot.models import DeviceStatus, StreetSign
+
+City.objects.create(name= 'Rio de Janeiro', account = payer, latitude = -22.9035, longitude=-43.2096, radius=1)
+City.objects.create(name= 'New York', account = receiver, latitude = 40.7128, longitude=74.0060, radius=1)
+
+# device located in Rio (dynamically found through the location)
+streetSign = StreetSign.objects.create(latitude = -22.9035, longitude = -43.2096, status = DeviceStatus.WORKING, enabled = True)
+
+from iot.models import Microphone, Thermometer, CO2Meter, Camera
+from iot.models import Speaker
+
+Microphone.objects.create(device = streetSign)
+Thermometer.objects.create(device = streetSign)
+CO2Meter.objects.create(device = streetSign)
+Camera.objects.create(device = streetSign)
+Speaker.objects.create(device = streetSign)
+
+# device located in New York (dynamically found through the location)
+s2 = StreetSign.objects.create(latitude = 40.7128, longitude=75.0000, status = DeviceStatus.WORKING, enabled = True)
+print(s2.city)
+
+
+'''
 from iot.models import Role, Resident, Visitor
 from iot.models import StreetSign, Status, InformationKiosk, StreetLight
 from iot.models import Camera, CameraEvent, Microphone, MicrophoneEvent, Thermometer, ThermometerEvent, CO2Meter, CO2Event, InputSensor
 
-City.objects.create(name= 'Rio de Janeiro')
-City.objects.create(name= 'New York')
 
 adult_role = Role.objects.create(name = "adult_role")
 Resident.objects.create(name = "John" ,phone = "21-3333-4444", role=adult_role)

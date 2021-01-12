@@ -1,6 +1,6 @@
 from .city import City
 
-from .devices import Device, Status, StreetSign, StreetLight, InformationKiosk, ParkingSpace, Robot, Vehicle
+from .devices import Device, DeviceStatus, StreetSign, StreetLight, InformationKiosk, ParkingSpace, Robot, Vehicle
 from .devices import InputSensor, Microphone, Thermometer, CO2Meter, Camera
 from .devices import OutputSensor, Speaker
 

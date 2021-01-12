@@ -3,7 +3,7 @@ from django.utils import timezone
 import uuid
 
 class Account(models.Model):
-    balance = models.FloatField(default=0.0)
+    balance = models.FloatField(default=0.0, editable=False)
 
     def __str__(self):
         return 'account id ' + str(self.id) + ' with balance ' + str(self.balance)

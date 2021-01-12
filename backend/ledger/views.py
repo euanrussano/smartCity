@@ -32,6 +32,11 @@ class TransactionAPIViewset(viewsets.ModelViewSet):
         else:
             return Response({'status': 'transaction NOT processed'},
                             status=status.HTTP_400_BAD_REQUEST)
+    
+    # a transaction can not be deleted
+    def destroy(self, request, pk=None):
+        response = {'message': 'Delete function is not offered in this path.'}
+        return Response(response, status=status.HTTP_403_FORBIDDEN)
 
 class UserAPIViewset(viewsets.ModelViewSet):
     permission_classes = (IsSuperUser,) # new

@@ -16,7 +16,7 @@
   - [API endpoints](#api-endpoints)
     - [Ledger API endpoints](#ledger-api-endpoints)
   - [Status](#status)
-  - [Inspiration](#inspiration)
+  - [References used to create this project](#references-used-to-create-this-project)
   - [Contact](#contact)
 
 ## General info
@@ -101,7 +101,7 @@ Users can only be viewed by a superuser.
 ### Ledger app:
 
 * Create/retrieve/update/delete (CRUD) an account
-* CRUD a transaction
+* CRU(not D) a transaction
 * process a transaction (so that balance is transferred from the payer to the receiver account)
 * filter the transactions by status, payer (account id) or receiver (account id)
 
@@ -175,13 +175,17 @@ Details of user id 1
 http://localhost:8000/api/v1/users/1
 ```
 
-All have CRUD functionalities, as shown in the **notebooks** folder
+Most have CRUD functionalities (e.g transaction can not be destroyed), as shown in the **notebooks** folder
 
 
 ## Status
 Project is: _in progress_,<!-- _finished_, _no longer continue_ and why?-->
 
-## Inspiration
+## References used to create this project
+
+* Django for APIs
+* Django Official documentation
+
 
 ## Contact
 Created by [@euanrussano](https://e-sophia.netlify.app) - feel free to contact me!
